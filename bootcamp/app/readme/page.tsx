@@ -7,7 +7,7 @@ export default function ReadmeGenerator() {
   const [generatedContent, setGeneratedContent] = useState("");
   const [error, setError] = useState("");
 
-  const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
+  const handleSubmit = async (e: { preventDefault: () => void; currentTarget: HTMLFormElement | undefined; }) => {
     e.preventDefault();
     setLoading(true);
     setError("");
@@ -20,28 +20,32 @@ export default function ReadmeGenerator() {
         body: formData,
       });
 
-      const data = await response.json();
+      if (!response.ok) {
+        throw new Error(`Error: ${response.status}`);
+      }
 
+      const data = await response.json();
       setGeneratedContent(data.content);
     } catch (err) {
       setError(err instanceof Error ? err.message : "Something went wrong");
+      console.error("Submission error:", err);
     } finally {
       setLoading(false);
     }
   };
 
   return (
-    <div className="min-h-screen bg-gray-50 py-8 px-4 sm:px-6 lg:px-8">
+    <div className="min-h-screen bg-white py-8 px-4">
       <div className="max-w-3xl mx-auto">
-        <div className="bg-white shadow sm:rounded-lg">
-          <div className="px-4 py-5 sm:p-6">
-            <h1 className="text-2xl font-bold text-gray-900 mb-6">
-              README Generator
+        <div className="bg-pink-200 border-4 border-black shadow-[8px_8px_0px_0px_rgba(0,0,0,1)]">
+          <div className="px-6 py-8">
+            <h1 className="text-3xl font-black text-black mb-8">
+              README GENERATOR
             </h1>
 
             <form onSubmit={handleSubmit} className="space-y-6 text-black">
               <div>
-                <label htmlFor="title" className="block text-sm font-medium text-gray-700">
+                <label htmlFor="title" className="block text-lg font-bold text-black mb-2">
                   Project Title
                 </label>
                 <input
@@ -49,12 +53,12 @@ export default function ReadmeGenerator() {
                   name="title"
                   id="title"
                   required
-                  className="mt-1 block w-full border border-gray-300 rounded-md shadow-sm p-2"
+                  className="mt-1 block w-full border-4 border-black p-3 bg-white"
                 />
               </div>
 
               <div>
-                <label htmlFor="description" className="block text-sm font-medium text-gray-700">
+                <label htmlFor="description" className="block text-lg font-bold text-black mb-2">
                   Description
                 </label>
                 <textarea
@@ -62,12 +66,12 @@ export default function ReadmeGenerator() {
                   id="description"
                   required
                   rows={3}
-                  className="mt-1 block w-full border border-gray-300 rounded-md shadow-sm p-2"
+                  className="mt-1 block w-full border-4 border-black p-3 bg-white"
                 />
               </div>
 
               <div>
-                <label htmlFor="motive" className="block text-sm font-medium text-gray-700">
+                <label htmlFor="motive" className="block text-lg font-bold text-black mb-2">
                   Motive behind the project
                 </label>
                 <textarea
@@ -75,12 +79,12 @@ export default function ReadmeGenerator() {
                   id="motive"
                   required
                   rows={3}
-                  className="mt-1 block w-full border border-gray-300 rounded-md shadow-sm p-2"
+                  className="mt-1 block w-full border-4 border-black p-3 bg-white"
                 />
               </div>
 
               <div>
-                <label htmlFor="features" className="block text-sm font-medium text-gray-700">
+                <label htmlFor="features" className="block text-lg font-bold text-black mb-2">
                   Features and Working
                 </label>
                 <textarea
@@ -88,12 +92,12 @@ export default function ReadmeGenerator() {
                   id="features"
                   required
                   rows={3}
-                  className="mt-1 block w-full border border-gray-300 rounded-md shadow-sm p-2"
+                  className="mt-1 block w-full border-4 border-black p-3 bg-white"
                 />
               </div>
 
               <div>
-                <label htmlFor="technologies" className="block text-sm font-medium text-gray-700">
+                <label htmlFor="technologies" className="block text-lg font-bold text-black mb-2">
                   Technologies
                 </label>
                 <input
@@ -101,12 +105,12 @@ export default function ReadmeGenerator() {
                   name="technologies"
                   id="technologies"
                   required
-                  className="mt-1 block w-full border border-gray-300 rounded-md shadow-sm p-2"
+                  className="mt-1 block w-full border-4 border-black p-3 bg-white"
                 />
               </div>
 
               <div>
-                <label htmlFor="domain" className="block text-sm font-medium text-gray-700">
+                <label htmlFor="domain" className="block text-lg font-bold text-black mb-2">
                   Domain
                 </label>
                 <input
@@ -114,12 +118,12 @@ export default function ReadmeGenerator() {
                   name="domain"
                   id="domain"
                   required
-                  className="mt-1 block w-full border border-gray-300 rounded-md shadow-sm p-2"
+                  className="mt-1 block w-full border-4 border-black p-3 bg-white"
                 />
               </div>
 
               <div>
-                <label htmlFor="setup" className="block text-sm font-medium text-gray-700">
+                <label htmlFor="setup" className="block text-lg font-bold text-black mb-2">
                   Setup Instructions
                 </label>
                 <textarea
@@ -127,7 +131,7 @@ export default function ReadmeGenerator() {
                   id="setup"
                   required
                   rows={3}
-                  className="mt-1 block w-full border border-gray-300 rounded-md shadow-sm p-2"
+                  className="mt-1 block w-full border-4 border-black p-3 bg-white"
                 />
               </div>
 
@@ -135,30 +139,38 @@ export default function ReadmeGenerator() {
                 <button
                   type="submit"
                   disabled={loading}
-                  className={`w-full flex justify-center py-2 px-4 border border-transparent rounded-md shadow-sm text-sm font-medium text-white ${
+                  className={`w-full flex justify-center py-3 px-4 border-4 border-black text-lg font-black ${
                     loading
-                      ? "bg-gray-400 cursor-not-allowed"
-                      : "bg-blue-600 hover:bg-blue-700"
+                      ? "bg-gray-300 cursor-not-allowed"
+                      : "bg-green-300 hover:translate-y-1 hover:shadow-[4px_4px_0px_0px_rgba(0,0,0,1)] shadow-[8px_8px_0px_0px_rgba(0,0,0,1)] transition-all"
                   }`}
                 >
-                  {loading ? "Generating..." : "Generate README"}
+                  {loading ? "GENERATING..." : "GENERATE README"}
                 </button>
               </div>
             </form>
 
             {error && (
-              <div className="mt-4 p-4 bg-red-50 border border-red-200 rounded-md">
-                <p className="text-red-600">{error}</p>
+              <div className="mt-6 p-4 bg-red-200 border-4 border-black">
+                <p className="text-black font-bold">{error}</p>
               </div>
             )}
 
             {generatedContent && (
-              <div className="mt-6">
-                <h2 className="text-lg font-medium text-gray-900 mb-2">
-                  Generated README
+              <div className="mt-8">
+                <h2 className="text-xl font-black text-black mb-4">
+                  GENERATED README
                 </h2>
-                <div className="bg-gray-50 p-4 rounded-md">
-                  <pre className="whitespace-pre-wrap text-black">{generatedContent}</pre>
+                <div className="bg-blue-100 p-6 border-4 border-black">
+                  <div className="flex justify-end mb-2">
+                    <button 
+                      onClick={() => navigator.clipboard.writeText(generatedContent)}
+                      className="bg-purple-200 px-4 py-2 border-2 border-black font-bold hover:bg-purple-300"
+                    >
+                      COPY
+                    </button>
+                  </div>
+                  <pre className="whitespace-pre-wrap text-black overflow-auto">{generatedContent}</pre>
                 </div>
               </div>
             )}
