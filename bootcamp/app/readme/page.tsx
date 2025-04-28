@@ -8,7 +8,7 @@ export default function ReadmeGenerator() {
   const [error, setError] = useState("");
 
   const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
-    
+    e.preventDefault();
     setLoading(true);
     setError("");
     setGeneratedContent("");
